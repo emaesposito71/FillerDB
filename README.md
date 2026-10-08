@@ -42,13 +42,14 @@ L'algoritmo **deve** restare identico qui e in Kotlin:
 
 Se nessuno matcha: fallback sul dato Tenrai/runtime (niente mixed per la nicchia).
 
-## Guardia titoli avvelenati
+## Guardia titoli avvelenati (non serve farci niente)
 
 Alcuni slug mostrano un ALTRO show (es. `bakemonogatari` → "Food Wars! OVAs"):
-il titolo pagina deve matchare lo slug (sottoinsieme di token o uguale senza
-spazi), altrimenti il file si scarta (e si cancella se esiste: self-heal).
-Eccezioni legittime in `overrides.json → force_keep`. Pagine senza Condensed
-provano la tabella EpisodeList; se manca pure quella si skippano.
+l'identità è il titolo pagina (h1), mai lo slug — il contenuto è coerente con
+l'h1, quindi il dato resta buono, attribuito al vero titolo. Il mapping verso
+AnimeUnity usa quel titolo e torna quasi sempre. Pagine senza Condensed
+provano la tabella EpisodeList (incluse le righe `anime_canon` → canon);
+se manca pure quella si skippano.
 
 ## Schedulazione
 

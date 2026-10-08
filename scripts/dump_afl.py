@@ -2,9 +2,9 @@
 """Dump delle Quick List di animefillerlist.com + mapping verso AnimeUnity.
 
 Fase 1 (dump): /shows -> per slug parse del blocco #Condensed (canon/mixed/
-  filler), fallback sulla tabella EpisodeList, guardia sul titolo (il sito ha
-  slug avvelenati che mostrano un ALTRO show: senza match si scarta e si
-  cancella il file esistente). Scrive shows/<slug>.json + index.json.
+  filler/anime_canon) con fallback sulla tabella EpisodeList. Identita' =
+  titolo PAGINA (h1), mai lo slug: gli slug riciclati mostrano un altro show
+  ma il contenuto e' coerente con l'h1. Scrive shows/<slug>.json + index.json.
 Fase 2 (map): per ogni show, cerca il titolo su AnimeUnity (/archivio?title=)
   e registra map.json {anilist_id: slug} su match ESATTO normalizzato.
   overrides.json integra a mano ({force_keep: [...], map: {...}}).
@@ -29,7 +29,13 @@ from pathlib import Path
 BASE = "https://www.animefillerlist.com"
 UA = {"User-Agent": "Mozilla/5.0 (compatible; FillerDB-bot/1.0)"}
 
-KINDS = (("manga_canon", "canon"), ("mixed_canon/filler", "mixed"), ("filler", "filler"))
+KINDS = (
+    ("manga_canon", "canon"),
+    ("mixed_canon/filler", "mixed"),
+    ("filler", "filler"),
+    # pagine film/special (es. digimon-adventure-tri): solo "canone anime"
+    ("anime_canon", "canon"),
+)
 
 
 def fetch(url: str, timeout: int = 30) -> str:
@@ -46,10 +52,6 @@ def normalize(s: str) -> str:
     s = "".join(c for c in s if unicodedata.category(c) != "Mn")
     s = re.sub(r"[^a-z0-9]+", " ", s)
     return re.sub(r"\s+", " ", s).strip()
-
-
-def nospace(s: str) -> str:
-    return normalize(s).replace(" ", "")
 
 
 def show_slugs(home_html: str) -> list:
@@ -83,32 +85,38 @@ def expand_ranges(texts: list) -> set:
 
 
 def parse_condensed(html: str) -> dict:
-    out = {}
+    # due classi possono confluire nello stesso kind (manga+anime canon):
+    # unione, non sovrascrittura
+    out = {"canon": set(), "mixed": set(), "filler": set()}
     for cls, kind in KINDS:
         m = re.search(
             r'<div class="%s">.*?<span class="Episodes">(.*?)</span>' % re.escape(cls),
             html,
             re.S,
         )
-        eps = set()
-        if m:
-            texts = re.findall(r"<a[^>]*>([^<>]+)</a>", m.group(1))
-            eps = expand_ranges(texts)
-        out[kind] = sorted(eps)
-    return out
+        if not m:
+            continue
+        texts = re.findall(r"<a[^>]*>([^<>]+)</a>", m.group(1))
+        out[kind] |= expand_ranges(texts)
+    return {k: sorted(v) for k, v in out.items()}
 
 
 def parse_table(html: str) -> dict:
-    """Fallback: tabella EpisodeList (stesse classi per riga)."""
+    """Fallback: tabella EpisodeList (stesse classi per riga, inclusa anime_canon)."""
     out = {"canon": set(), "mixed": set(), "filler": set()}
     for m in re.finditer(
-        r'<tr class="(manga_canon|mixed_canon/filler|filler)\b[^"]*"[^>]*>'
+        r'<tr class="(manga_canon|mixed_canon/filler|filler|anime_canon)\b[^"]*"[^>]*>'
         r'.*?<td class="Number">(\d+)</td>',
         html,
         re.S,
     ):
         cls, num = m.group(1), int(m.group(2))
-        kind = {"manga_canon": "canon", "mixed_canon/filler": "mixed", "filler": "filler"}[cls]
+        kind = {
+            "manga_canon": "canon",
+            "mixed_canon/filler": "mixed",
+            "filler": "filler",
+            "anime_canon": "canon",
+        }[cls]
         out[kind].add(num)
     return {k: sorted(v) for k, v in out.items()}
 
@@ -121,18 +129,6 @@ def show_title(html: str) -> str:
     return re.sub(r"\s+", " ", t).strip()
 
 
-def title_matches(slug: str, title: str) -> bool:
-    """Il titolo pagina deve corrispondere allo slug, altrimenti e' una pagina
-    avvelenata (slug riciclati che mostrano un altro show)."""
-    st = set(normalize(slug.replace("-", " ")).split())
-    tt = set(normalize(title).split())
-    if not st or not tt:
-        return False
-    if st <= tt or tt <= st:
-        return True
-    return nospace(slug.replace("-", " ")) == nospace(title)
-
-
 def compact(nums: list) -> list:
     runs = []
     for n in nums:
@@ -143,8 +139,10 @@ def compact(nums: list) -> list:
     return runs
 
 
-def dump_show(root: Path, slug: str, force_keep: set, sleep_s: float):
-    """Ritorna (title, ok). Scrive/cancella shows/<slug>.json."""
+def dump_show(root: Path, slug: str, sleep_s: float):
+    """Scrive shows/<slug>.json. Identita' = titolo PAGINA (h1), mai lo slug:
+    gli slug riciclati mostrano un altro show ma il contenuto e' coerente
+    con l'h1, quindi il dato resta buono (attribuito al vero titolo)."""
     target = root / "shows" / f"{slug}.json"
     try:
         html = fetch(f"{BASE}/shows/{slug}")
@@ -152,14 +150,9 @@ def dump_show(root: Path, slug: str, force_keep: set, sleep_s: float):
         print(f"[!] {slug}: download fallito ({e})")
         return None, False
     title = show_title(html)
-    if not title or (not title_matches(slug, title) and slug not in force_keep):
-        if target.exists():
-            target.unlink()
-            print(f"[!] {slug:55s} titolo '{title}' non matcha: FILE AVVELENATO RIMOSSO")
-        else:
-            print(f"[!] {slug:55s} titolo '{title}' non matcha: scartato")
-        return title, False
-    forced = slug in force_keep
+    if not title:
+        print(f"[!] {slug}: senza titolo, scartato")
+        return None, False
     parsed = parse_condensed(html)
     if sum(len(v) for v in parsed.values()) == 0:
         parsed = parse_table(html)
@@ -177,10 +170,9 @@ def dump_show(root: Path, slug: str, force_keep: set, sleep_s: float):
     (root / "shows").mkdir(parents=True, exist_ok=True)
     with open(target, "w", encoding="utf-8") as f:
         json.dump(doc, f, ensure_ascii=False)
-    flag = " (forced)" if forced else ""
     print(
         f"[+] {slug:55s} {title!r} canon={len(parsed['canon'])} "
-        f"mixed={len(parsed['mixed'])} filler={len(parsed['filler'])}{flag}"
+        f"mixed={len(parsed['mixed'])} filler={len(parsed['filler'])}"
     )
     time.sleep(sleep_s)
     return title, True
@@ -288,7 +280,8 @@ def main() -> int:
             overrides = json.loads(op.read_text(encoding="utf-8"))
         except ValueError as e:
             print(f"[!] overrides.json invalido: {e}")
-    force_keep = set(overrides.get("force_keep") or [])
+    # nota: la vecchia chiave force_keep non serve piu' (l'identita' e' il
+    # titolo pagina, non lo slug) e viene ignorata se presente
 
     if not args.map_only:
         if args.slug:
@@ -307,7 +300,7 @@ def main() -> int:
         for i, slug in enumerate(slugs, 1):
             print(f"[{i}/{len(slugs)}] {slug} ...")
             try:
-                title, good = dump_show(root, slug, force_keep, args.sleep)
+                title, good = dump_show(root, slug, args.sleep)
             except Exception as e:
                 print(f"[!] {slug}: errore ({e})")
                 time.sleep(args.sleep)
