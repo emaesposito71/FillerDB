@@ -115,7 +115,10 @@ def parse_table(html: str) -> dict:
 
 def show_title(html: str) -> str:
     m = re.search(r"<h1>(.*?) Filler List</h1>", html, re.S)
-    return re.sub(r"\s+", " ", m.group(1)).strip() if m else ""
+    if not m:
+        return ""
+    t = m.group(1).replace("&quot;", '"').replace("&#039;", "'").replace("&amp;", "&")
+    return re.sub(r"\s+", " ", t).strip()
 
 
 def title_matches(slug: str, title: str) -> bool:

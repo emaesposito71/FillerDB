@@ -55,3 +55,17 @@ provano la tabella EpisodeList; se manca pure quella si skippano.
 Action mensile (`0 3 1 * *`) + `workflow_dispatch`. Gli show conclusi non cambiano
 mai; quelli in corso si aggiornano al giro dopo. Episodi oltre il max listato =
 sconosciuti (l'app usa il fallback).
+
+## Mapping verso AnimeUnity (in locale)
+
+L'Action fa solo dump (`--skip-map`): AnimeUnity risponde **403 ai runner
+GitHub** (WAF su IP datacenter), quindi il mapping gira sul tuo PC:
+
+```
+python scripts/dump_afl.py --map-only
+```
+
+Cerca ogni titolo su AnimeUnity con match esatto e scrive `map.json`
+`{anilist_id: slug}` (conserva i già mappati, interroga solo i nuovi).
+Committa `map.json` dopo. Gli orfani li elenca il log: curali in
+`overrides.json → map`, oppure lasciali al fallback Tenrai dell'app.
