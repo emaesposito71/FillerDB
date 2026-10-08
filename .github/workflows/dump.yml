@@ -23,7 +23,9 @@ jobs:
           python-version: "3.11"
 
       - name: Dump
-        run: python scripts/dump_afl.py
+        # solo dump: il mapping gira in locale (--map-only), perche' AnimeUnity
+        # risponde 403 ai runner GitHub (WAF su IP datacenter)
+        run: python scripts/dump_afl.py --skip-map
 
       - name: Commit
         run: |
