@@ -12,6 +12,10 @@ dump buono. A runtime zero dipendenze, zero rate-limit.
 - `shows/<slug>.json` — un anime: `{slug, title, updated, canon, mixed, filler}`
   con range compatti (`[[1,6],[8,8],…]` = episodi inclusi).
 - `index.json` — `{slug: [varianti normalizzate del titolo…]}` per il matching.
+- `map.json` — `{anilist_id: slug}`: mapping verso AnimeUnity (fase 2), così
+  l'app fa lookup O(1) senza fuzzy a runtime.
+- `overrides.json` — `{force_keep: [...], map: {...}}`: slug tenuti anche con
+  titolo difforme + mapping curati a mano (vince su tutto).
 - `scripts/dump_afl.py` — lo script (solo stdlib Python, niente dipendenze).
 
 ## Formato esempio (`shows/naruto.json`)
@@ -37,6 +41,14 @@ L'algoritmo **deve** restare identico qui e in Kotlin:
 3. `[^a-z0-9]+` → spazio singolo, trim
 
 Se nessuno matcha: fallback sul dato Tenrai/runtime (niente mixed per la nicchia).
+
+## Guardia titoli avvelenati
+
+Alcuni slug mostrano un ALTRO show (es. `bakemonogatari` → "Food Wars! OVAs"):
+il titolo pagina deve matchare lo slug (sottoinsieme di token o uguale senza
+spazi), altrimenti il file si scarta (e si cancella se esiste: self-heal).
+Eccezioni legittime in `overrides.json → force_keep`. Pagine senza Condensed
+provano la tabella EpisodeList; se manca pure quella si skippano.
 
 ## Schedulazione
 
