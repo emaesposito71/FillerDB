@@ -1,0 +1,34 @@
+name: Dump AFL
+
+# Mensile + manuale: rigenera shows/*.json e index.json da animefillerlist.com.
+# Se il sito restyla e il parse fallisce, lo si vede qui nei log mentre l'app
+# continua a servire l'ultimo dump buono.
+on:
+  schedule:
+    - cron: "0 3 1 * *"
+  workflow_dispatch:
+
+jobs:
+  dump:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Dump
+        run: python scripts/dump_afl.py
+
+      - name: Commit
+        run: |
+          git config user.name "fillerdb-bot"
+          git config user.email "fillerdb-bot@users.noreply.github.com"
+          git add shows index.json
+          git diff --cached --quiet || git commit -m "dump $(date -u +%F)"
+          git push
