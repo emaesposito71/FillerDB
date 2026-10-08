@@ -26,9 +26,13 @@
  "akame-ga-kill": [
   "akame ga kill"
  ],
+ "akatsuki-no-yona": [
+  "akatsuki no yona",
+  "yona of the dawn"
+ ],
  "ancient-magus-bride": [
   "ancient magus bride",
-  "the ancient magus 039 bride"
+  "the ancient magus bride"
  ],
  "angel-heart": [
   "angel heart"
@@ -54,6 +58,10 @@
   "attack on titan",
   "attack titan"
  ],
+ "attack-titan-ova-0": [
+  "attack on titan oads",
+  "attack titan ova 0"
+ ],
  "beastars": [
   "beastars"
  ],
@@ -74,8 +82,16 @@
   "berserk golden age arc memorial edition",
   "berserk the golden age arc memorial edition"
  ],
+ "beyblade-burst-god": [
+  "beyblade burst evolution",
+  "beyblade burst god"
+ ],
  "beyblade-burst-quadstrike": [
   "beyblade burst quadstrike"
+ ],
+ "beyblade-metal-fight": [
+  "beyblade metal fight",
+  "beyblade metal fusion"
  ],
  "beyblade-x": [
   "beyblade x"
@@ -181,6 +197,10 @@
  "dandadan": [
   "dan da dan",
   "dandadan"
+ ],
+ "darwins-game": [
+  "darwin s game",
+  "darwins game"
  ],
  "deadman-wonderland": [
   "deadman wonderland"
@@ -292,6 +312,10 @@
   "fate stay night unlimited blade works",
   "fatestay night unlimited blade works"
  ],
+ "fighting-spirit": [
+  "fighting spirit",
+  "hajime no ippo the fighting"
+ ],
  "fire-force": [
   "fire force"
  ],
@@ -345,7 +369,6 @@
   "girlfriend girlfriend"
  ],
  "girls-last-tour": [
-  "girls 039 last tour",
   "girls last tour"
  ],
  "goblin-slayer": [
@@ -367,6 +390,10 @@
  "gurren-lagann": [
   "gurren lagann"
  ],
+ "haikyuu": [
+  "haikyu",
+  "haikyuu"
+ ],
  "hajime-no-ippo-champion-road": [
   "hajime no ippo champion road"
  ],
@@ -386,6 +413,10 @@
   "hayate combat butler",
   "hayate the combat butler"
  ],
+ "heavens-lost-property": [
+  "heaven s lost property",
+  "heavens lost property"
+ ],
  "hell-girl": [
   "hell girl"
  ],
@@ -403,8 +434,16 @@
   "high school dxd",
   "highschool dxd"
  ],
+ "highschoool-dead": [
+  "highschool of the dead",
+  "highschoool dead"
+ ],
  "hikaru-no-go": [
   "hikaru no go"
+ ],
+ "hokuto-no-ken": [
+  "fist of the north star",
+  "hokuto no ken"
  ],
  "hunter-x-hunter": [
   "hunter hunter 2011",
@@ -441,7 +480,7 @@
   "it wrong try pick girls dungeon side sword oratoria"
  ],
  "jojos-bizarre-adventure-tv": [
-  "jojo 039 s bizarre adventure",
+  "jojo s bizarre adventure",
   "jojos bizarre adventure tv"
  ],
  "jujutsu-kaisen": [
@@ -476,6 +515,10 @@
   "katekyo hitman reborn",
   "reborn"
  ],
+ "keroro-gunsou-sgtfrog": [
+  "keroro gunsou sgtfrog",
+  "sgt frog"
+ ],
  "killing-bites": [
   "killing bites"
  ],
@@ -488,6 +531,10 @@
  ],
  "kizumonogatari": [
   "kizumonogatari"
+ ],
+ "komi-cant-communicate": [
+  "komi can t communicate",
+  "komi cant communicate"
  ],
  "land-lustrous": [
   "land lustrous",
@@ -509,6 +556,10 @@
   "made abyss",
   "made in abyss"
  ],
+ "magi-adventure-sinbad-tv": [
+  "magi adventure of sinbad",
+  "magi adventure sinbad tv"
+ ],
  "magi-labyrinth-magic": [
   "magi",
   "magi labyrinth magic"
@@ -516,11 +567,19 @@
  "magic-knight-rayearth": [
   "magic knight rayearth"
  ],
+ "magister-negi-magi": [
+  "magister negi magi",
+  "negima"
+ ],
  "maid-sama": [
   "maid sama"
  ],
  "maken-ki-battling-venus": [
   "maken ki battling venus"
+ ],
+ "masamune-kuns-revenge": [
+  "masamune kun s revenge",
+  "masamune kuns revenge"
  ],
  "mashle-magic-and-muscles": [
   "mashle magic and muscles"
@@ -533,8 +592,11 @@
   "mf ghost"
  ],
  "michiko-hatchin": [
-  "michiko amp hatchin",
   "michiko hatchin"
+ ],
+ "miss-kobayashis-dragon-maid": [
+  "miss kobayashi s dragon maid",
+  "miss kobayashis dragon maid"
  ],
  "mob-psycho-100": [
   "mob psycho 100"
@@ -678,6 +740,10 @@
   "rising shield hero",
   "the rising of the shield hero"
  ],
+ "ron-kamonohashis-forbidden-deductions": [
+  "ron kamonohashi s forbidden deductions",
+  "ron kamonohashis forbidden deductions"
+ ],
  "rosario-vampire": [
   "rosario vampire"
  ],
@@ -759,11 +825,19 @@
   "steins gate",
   "steinsgate"
  ],
+ "summertime-render": [
+  "summer time rendering",
+  "summertime render"
+ ],
  "sword-art-online": [
   "sword art online"
  ],
  "sword-art-online-alicization": [
   "sword art online alicization"
+ ],
+ "sword-art-online-alternative-ggo": [
+  "sword art online alternative ggo",
+  "sword art online alternative gun gale online"
  ],
  "time-i-got-reincarnated-slime": [
   "that time i got reincarnated as a slime",
@@ -840,6 +914,10 @@
  ],
  "yu-gi-oh": [
   "yu gi oh"
+ ],
+ "yu-gi-oh-5ds": [
+  "yu gi oh 5d s",
+  "yu gi oh 5ds"
  ],
  "yu-gi-oh-arc-v": [
   "yu gi oh arc v"
